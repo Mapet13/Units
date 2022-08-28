@@ -366,6 +366,55 @@ constexpr auto operator/(left_dividable_value_type<Value_t> auto lhs, Unit<Tag_t
 }
 
 
+template <typename First_t, typename Second_t>
+struct Contains_same_elements : std::false_type
+{
+};
+
+template <>
+struct Contains_same_elements<Unit_tag_pack<One_unit>, Unit_tag_pack<One_unit>> : std::true_type
+{
+};
+
+template <typename... First_pack, typename... Second_pack>
+struct Contains_same_elements<Unit_tag_pack<First_pack...>, Unit_tag_pack<Second_pack...>>
+  : std::integral_constant<bool,
+      sizeof...(First_pack) == sizeof...(Second_pack)
+        && std::conjunction_v<Have_same_powered_unit<First_pack, Second_pack...>...>>
+{
+};
+
+
+template <typename First_t, typename Second_t>
+struct Are_tags_same : std::false_type
+{
+};
+
+template <typename First_num_pack, typename First_den_pack, typename Second_num_pack, typename Second_den_pack>
+struct Are_tags_same<Fractioned_unit_tag<First_num_pack, First_den_pack>,
+  Fractioned_unit_tag<Second_num_pack, Second_den_pack>>
+  : std::integral_constant<bool,
+      Contains_same_elements<First_num_pack, Second_num_pack>::value
+        && Contains_same_elements<First_den_pack, Second_den_pack>::value>
+{
+};
+
+
+export template <typename First_t, typename Second_t>
+struct Is_same : std::false_type
+{};
+
+export template <typename First_tag_t,
+  unit_value_type First_value_t,
+  typename First_ratio_t,
+  typename Second_tag_t,
+  unit_value_type Second_value_t,
+  typename Second_ratio_t>
+struct Is_same<Unit<First_tag_t, First_value_t, First_ratio_t>, Unit<Second_tag_t, Second_value_t, Second_ratio_t>>
+  : std::integral_constant<bool, Are_tags_same<First_tag_t, Second_tag_t>::value>
+{
+};
+
 
 template <typename Base_unit_tag>
 using New_unit_tag = Fractioned_unit_tag<Unit_tag_pack<Powered_unit_tag<Base_unit_tag>>, Unit_tag_pack<One_unit>>;
