@@ -301,6 +301,8 @@ struct Unit
       (value * div_ratio::num) / div_ratio::den) };
   }
 
+  constexpr auto to_base() { return static_cast<Unit<Type_of_unit, Value_t, Base_unit_t>>(*this); }
+
   Value_t value;
 };
 
