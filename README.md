@@ -6,7 +6,6 @@ Main goal was to create type system where you can easly compare unit types. Unfo
 
 ## Examples
 ```
-
 // literals and math operation example
 const auto time{ 10.0_s };
 const auto distance{ 120.0_m };
@@ -23,5 +22,4 @@ export namespace physics::constants {
 template <std::floating_point T>
 inline static constexpr units::Acceleration<T> gravitational_acceleration{ static_cast<T>(9.80665) };
 }
-
 ```
