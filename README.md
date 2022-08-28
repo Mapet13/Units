@@ -12,6 +12,9 @@ const auto velocity{ distance / time };
 const auto acceleration{ velocity / time };
 const auto velocity_2{ acceleration * time };
 
+static_assert(Is_same<decltype(time * distance), decltype(distance * time)>::value);
+static_assert(!Is_same<decltype(time * distance), decltype(distance / time)>::value);
+
 export namespace physics::constants {
 template <std::floating_point T>
 inline static constexpr units::Acceleration<T> gravitational_acceleration{ static_cast<T>(9.80665) };
