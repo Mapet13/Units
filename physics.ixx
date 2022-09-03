@@ -93,13 +93,13 @@ struct Rotated_fractioned_unit_tag<Fractioned_unit_tag<Unit_tag_pack<Num_pack...
 
 
 template <typename T, typename U>
-struct Are_powered_units_with_same_base : std::integral_constant<bool, false>
+struct Are_powered_units_with_same_base : std::false_type
 {
 };
 
 template <typename Base, std::intmax_t left_pow, std::intmax_t right_pow>
 struct Are_powered_units_with_same_base<Powered_unit_tag<Base, left_pow>, Powered_unit_tag<Base, right_pow>>
-  : std::integral_constant<bool, true>
+  : std::true_type
 {
 };
 
@@ -201,6 +201,7 @@ struct Multiplication_helper_unit_tag<T, One_unit>
 };
 
 template <typename... Left_den_pack, typename T>
+requires(!std::same_as<T, One_unit>)
 struct Multiplication_helper_unit_tag<Fractioned_unit_tag<Unit_tag_pack<One_unit>, Unit_tag_pack<Left_den_pack...>>, T>
 {
   using Type = Fractioned_unit_tag<Unit_tag_pack<T>, Unit_tag_pack<Left_den_pack...>>;
@@ -270,11 +271,10 @@ struct Multiplication_unit_tag<Left_t,
 
 
 template <typename Left, typename Right>
-struct Division_unit_tag {
-    using Type = Multiplication_unit_tag<Left, typename Rotated_fractioned_unit_tag<Right>::Type>::Type;
+struct Division_unit_tag
+{
+  using Type = Multiplication_unit_tag<Left, typename Rotated_fractioned_unit_tag<Right>::Type>::Type;
 };
-
-
 
 
 export template <typename Type_of_unit, unit_value_type Value_t, typename Ratio_t = Base_unit_t>
